@@ -79,6 +79,14 @@ import importlib
 #             target="_blank").stub()(wp)
 #     return wp
 
+def on_mouseenter(dbref, msg, to_ms):
+    print ("ME", dbref.key)
+    pass
+
+def on_mouseleave(dbref, msg, to_ms):
+    print ("ML ", dbref.key)
+    pass
+
 
 def create_endpoint(wp_comp_mod, **kwargs):
     """
@@ -98,6 +106,46 @@ def create_endpoint(wp_comp_mod, **kwargs):
         # pjm = wp_comp_mod.pspan
         # pjm.build_json()
         # print (pjm.obj_json)
+        def scan_childs(hc):
+            has_childs =  hasattr(hc, 'childs')
+            has_components = hasattr(hc, 'components')
+            # hccMutable hccomponents are marked as being static
+            # but they have attribute components
+            # so we cannot use is_static as marker.
+            # we will try both has_childs and has_components
+            # whichever is available go with that. 
+            
+            # if hc.stub().is_static():
+            #     if has_childs:
+            #         print ("passive div has childs attribute")
+            #         assert False
+            # else:
+            #     if has_components:
+            #         print ("mutable div-staticCore has components attribute")
+            #         assert False
+
+
+            if has_childs and has_components:
+                assert False
+                
+            elif has_childs:
+                for cc in hc.childs:
+                    yield from scan_childs(cc)
+                    
+            elif has_components:
+                for cc in hc.components:
+                    yield from scan_childs(cc)
+            else:
+                pass
+            yield(hc)
+
+        for hc in wp_comp_mod.wp_childs:
+            for comp in scan_childs(hc):
+                comp.on('mouseenter', on_mouseenter)
+                comp.on('mouseleave', on_mouseleave)
+                print(comp.event_handlers)
+                
+            
         wp_template = oj.Mutable.ResponsiveStatic_CSR_WebPage(childs=wp_comp_mod.wp_childs,
                                                               cookie_state_attr_names=oj.aci.the_starlette_app.cookie_state_attr_names,
                                                               **kwargs,

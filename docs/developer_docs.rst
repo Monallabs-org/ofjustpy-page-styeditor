@@ -25,6 +25,8 @@ The super basics
 1. pse.create_endpoint to use pse services
 2. pse.create_endpoint requires that the component be in separate
    file "wp_components'
+3. `oj.load_app` should be called in the components file
+
 
    
 Bits and Pieces

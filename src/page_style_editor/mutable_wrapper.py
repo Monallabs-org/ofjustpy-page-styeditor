@@ -77,16 +77,18 @@ def wrapper_id(self):
 
 from ofjustpy_engine.HC_Div_type_mixins import (jpBaseComponentMixin,
                                                 TwStyMixin,
-                                                DOMEdgeMixin
+                                                DOMEdgeMixin,
+                                                EventMixin
                                                 )
 
 from addict_tracking_changes import Dict
 import traceback
 import sys
 class StaticCore(
-    jpBaseComponentMixin,
-    TwStyMixin,
-    DOMEdgeMixin
+        jpBaseComponentMixin,
+        TwStyMixin,
+        DOMEdgeMixin,
+        EventMixin
 ):
     """
     provides baseComponent (id, show, debounce, etc)
@@ -112,6 +114,9 @@ class StaticCore(
         TwStyMixin.__init__(
             self, *args, domDict=self.domDict, attrs=self.attrs, **kwargs
         )
+        EventMixin.__init__(
+            self, *args, **kwargs
+            )
 
         
 
@@ -284,4 +289,4 @@ def get_styedit_A():
 #         raise id(self)
         
 #     pass
-        
+
