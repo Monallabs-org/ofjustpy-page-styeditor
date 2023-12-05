@@ -26,7 +26,9 @@ The super basics
 2. pse.create_endpoint requires that the component be in separate
    file "wp_components'
 3. `oj.load_app` should be called in the components file
-
+4. for patch to work do reload from lowest component to top-most component.
+5. we have created a mess with dpath and changes over dict and list item; stubstore
+   cannot be int. 
 
    
 Bits and Pieces

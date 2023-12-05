@@ -50,9 +50,10 @@ from .mutable_wrapper import (wrapper_is_static,
                               ActiveJsonMixin,
                               StaticCore,
                               get_styedit_A,
-                              HCCPassiveJsonMixin
-                              
+                              HCCPassiveJsonMixin,
                               )
+
+from .HC_TF import gen_HC_type
 import importlib
 
 
@@ -93,12 +94,13 @@ def create_endpoint(wp_comp_mod, **kwargs):
     """
     #
     # ========== create the template; with patched JsonMixin =========
-    with patch('ofjustpy_engine.SHC_types_mixin.PassiveJsonMixin',
+    with patch('ofjustpy.HC_TF.gen_HC_type', new=gen_HC_type), patch('ofjustpy_engine.SHC_types_mixin.PassiveJsonMixin',
                new=PassiveJsonMixin), patch('ofjustpy_engine.SHC_types_mixin.ActiveJsonMixin',
                new=ActiveJsonMixin), patch('ofjustpy_engine.SHC_types_mixin.HCCPassiveJsonMixin',
                new=HCCPassiveJsonMixin), patch('ofjustpy_engine.SHC_types_mixin.StaticCore',
           new = StaticCore
           ):
+        
         import ofjustpy as oj
         wp_comp_mod = importlib.import_module(wp_comp_mod)
         #oj = wp_comp_mod.oj
@@ -154,12 +156,7 @@ def create_endpoint(wp_comp_mod, **kwargs):
     @oj.webpage_cache(wp_template.id)
     def endpoint(request, *args, **kwargs):
         # create wp within the patched context
-        with patch.object(oj.TF_impl.Stub_HCPassive,
-                          'id',
-                          property(wrapper_id)
-                          ), patch.object(oj.TF_impl.Stub_HCPassive,
-                                          'is_static',
-                                          wrapper_is_static):
+        with patch.object(oj.HC_TF, 'gen_Stub_HCPassive', gen_Stub_HCPassive):
             sm = oj.tracker.get_session_manager(request)
             with oj.tracker.sessionctx(sm):
                 wp_ = wp_template.stub()

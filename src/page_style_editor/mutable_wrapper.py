@@ -44,13 +44,17 @@ from py_tailwind_utils import dget
 #     return wrapper
 
 
+# this wrapper is no longer required
+# keeping it around until everything is working again. 
 def wrapper_is_static(self):
     print("mock replace function: is_static is called")
     return False
 
+# this wrapper is no longer required
+# keeping it around until everything is working again. 
 def wrapper_id(self):
-
-    return id(self.target)
+    
+    return self.target.id
 
 
 # def wrapper_build_json(f):

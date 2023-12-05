@@ -64,7 +64,7 @@ def build_styeditor_endpoint(target_wp):
     importlib.reload(ojx)
     # make sure every module is reloaded
     # in order of the import hierarchy
-    importlib.reload(oj.TF_impl)
+    #importlib.reload(oj.TF_impl)
     importlib.reload(oj.SHC_types)
     importlib.reload(oj.Div_TF)
     importlib.reload(oj.HC_TF)
