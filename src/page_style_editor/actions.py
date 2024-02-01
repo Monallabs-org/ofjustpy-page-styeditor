@@ -8,8 +8,85 @@ from py_tailwind_utils import (tstr,
                                dget,
                                dnew
                                )
+from py_tailwind_utils import *
 import logging
 import ofjustpy as oj
+
+
+def on_enter_focus_hcobj(appstate, arg, wp):
+    """
+    appctx=/update_sty_hcobj/selected_hcobj
+    """
+    # print ("WTF : pause_selection ===== ", id(appstate.update_sty_hcobj.pause_selection), " ",
+    #        appstate.update_sty_hcobj.pause_selection)
+    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    if wp.session_manager.pause_selection == True:
+        print("selection paused: no action taken ")
+        return 
+    print ("in action: highlight_selected_hcobj")
+    print ("selected_hcobj = ", arg)
+    print ("current selected_hcobj = ", appstate.update_sty_hcobj.selected_hcobj)
+
+    if appstate.update_sty_hcobj.prev_selected_hcobj:
+        #print ("prev_selected_hcobj is not none = ", appstate.update_sty_hcobj.prev_selected_hcobj)
+        appstate.update_sty_hcobj.prev_selected_hcobj.remove_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)
+        pass
+    
+    arg.add_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)    
+    appstate.update_sty_hcobj.prev_selected_hcobj = appstate.update_sty_hcobj.selected_hcobj
+    
+    pass
+
+
+def on_exit_focus_hcobj(appstate, arg, wp):
+    """
+    appctx=/update_sty_hcobj/deselected_hcobj
+    """
+
+    if appstate.update_sty_hcobj.pause_selection == True:
+        print("selection paused: no action taken ")
+        return
+    
+    try:
+        arg.remove_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)
+    except:
+        pass
+    appstate.update_sty_hcobj.prev_selected_hcobj = None
+    pass
+
+def on_mouseclick_hcobj(appstate, arg, wp):
+    """
+    appctx=/update_sty_hcobj/clicked_hcobj
+    """
+    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    wp.session_manager.pause_selection = True
+    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    
+    # print("alt-approach mouseclick prechange ", appstate.pause_selection, id(appstate.pause_selection))
+    # appstate.pause_selection  = True
+    # print("alt-approach mouseclick prechange ", appstate.pause_selection, id(appstate.pause_selection))
+    # print ("Mouse clicked on ", arg, " ", arg.id, " ", appstate.update_sty_hcobj.clicked_hcobj)
+    # print ("The current selection ==> ", appstate.update_sty_hcobj.selected_hcobj)
+    # print ("debug  ==> ", id(appstate), " ", id(appstate.update_sty_hcobj), " ", id(appstate.update_sty_hcobj.pause_selection))
+    
+    if appstate.update_sty_hcobj.clicked_hcobj.id == appstate.update_sty_hcobj.selected_hcobj.id:
+        # toggle pause selection 
+        if wp.session_manager.pause_selection == False:
+            print("Pausing selection ")
+            #         appstate.update_sty_hcobj['pause_selection'] = True
+    #         print ("====> ", appstate.update_sty_hcobj.pause_selection, id(appstate.update_sty_hcobj.pause_selection))
+    #     else:
+    #         print("Not Resuming selection ")
+    #         #appstate.update_sty_hcobj.pause_selection = False
+            
+    # else:
+    #     # First click on the component.
+    #     print("Turning off pause selection ", id(appstate.update_sty_hcobj.pause_selection))
+    #     appstate.update_sty_hcobj.pause_selection = False
+    #     # treat it as mouse enter
+    #     on_enter_focus_hcobj(appstate, arg, wp)
+        
+    pass
 def apply_color_to_utility_class_on_selected_hcobj(appstate, arg, wp):
     """
     appctx=/update_sty_hcobj/apply_color_to_utility_class
@@ -21,6 +98,7 @@ def apply_color_to_utility_class_on_selected_hcobj(appstate, arg, wp):
         
         the_hc = appstate.update_sty_hcobj.selected_hcobj
         print ("applying color ", tstr(the_utility_class/the_color))
+        print ("to ==> ", appstate.update_sty_hcobj.selected_hcobj)
         try:
             the_hc.add_twsty_tags(the_utility_class/the_color)
         except Exception as e:
@@ -130,3 +208,4 @@ def update_target_wp(appstate, arg, wp):
 #     #traceback.print_stack(file=sys.stdout)
 #     print ("update_sty_action called as update_sty ")
 
+ 
