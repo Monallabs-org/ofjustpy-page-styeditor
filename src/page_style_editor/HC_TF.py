@@ -4,7 +4,8 @@ passive, active, mutable components types can be created with
 options for other mixins
 """
 from ofjustpy_engine import HC_Div_type_mixins as TR
-from ofjustpy_engine import SHC_types_mixin as SCmixin
+#from ofjustpy_engine import SHC_types_mixin as SCmixin
+from . import SHC_types_mixin as SCmixin
 from ofjustpy_engine.mutable_HC_TF import classTypeGen as mutableClassTypeGen
 from ofjustpy_engine.HCType import HCType
 from py_tailwind_utils import conc_twtags, tstr
@@ -13,37 +14,15 @@ from py_tailwind_utils import conc_twtags, tstr
 from ofjustpy_engine.TF_impl import gen_Stub_HCActive
 from ofjustpy_engine.TF_impl import gen_Stub_HCMutable
 from ofjustpy_engine.TF_impl import Stub_HCMutable
+
 from ofjustpy_engine.tracker import trackStub
+
+
 from .TF_impl import gen_Stub_HCPassive
-
+from .TF_impl import IdMixin
+from .mutable_wrapper import ActiveJsonMixin
 # IdMixin for static components
-class IdMixin:
-    """
-    :id: The unique identifier for the component.
-    :param id: The ID attribute to associate with the component.
-    :type id: str or None, optional
-    """
 
-    def __init__(self, *args, **kwargs):
-        """
-        """
-        print ("self.key = ", self.key)
-        self.attrs.id = "/" + self.key  # cls.stub.spath #cls.next_id
-        self.domDict.id = self.attrs.id
-        self.htmlRender_attr.append(f'''id="{self.attrs.id}"''')
-        
-
-    @property
-    def id(self):
-        return self.domDict.id
-
-    # @id.setter
-    # def id(self, value):
-    #     self.domDict.id = value
-    #     self.attrs.id = value
-    #     self.htmlRender_attr.append(f'''id="{self.attrs.id}"''')
-
-        
 def gen_HC_type(
     hc_type,
     hc_tag,
@@ -61,15 +40,13 @@ def gen_HC_type(
     staticCoreMixins, mutableShellMixins apply only to mutable components
     staticCore_addonMixins, mutableShell_addonMixins: apply only to mutable components
     """
-
-
     match hc_type:
         case HCType.passive:
             hc_type = SCmixin.staticClassTypeGen(
                 taglabel=hc_tag,
                 tagtype=hctag_mixin,
                 addon_mixins=[*static_addon_mixins, TR.EventMixin, IdMixin],
-                jsonMixinType=SCmixin.PassiveJsonMixin,
+                jsonMixinType=ActiveJsonMixin,
             )
 
             class WithStub(hc_type):
@@ -96,12 +73,11 @@ def gen_HC_type(
             hc_type = SCmixin.staticClassTypeGen(
                 hc_tag,
                 tagtype=hctag_mixin,
-                jsonMixinType=SCmixin.ActiveJsonMixin,
+                jsonMixinType=ActiveJsonMixin,  #SCmixin.ActiveJsonMixin,
                 attach_event_handling=True,
                 addon_mixins=static_addon_mixins,
                 **kwargs,
             )
-
             class WithStub(hc_type):
                 def __init__(self, *args, **kwargs):
                     assert stytags_getter_func
@@ -117,36 +93,31 @@ def gen_HC_type(
             return WithStub
 
         case HCType.mutable:
-            assert False
-            # core_hc_type, mutable_shell_type = mutableClassTypeGen(
-            #     hc_tag,
-            #     hctag_mixin,
-            #     staticCoreMixins=staticCoreMixins,
-            #     mutableShellMixins=mutableShellMixins,
-            #     staticCore_addonMixins=[*staticCore_addonMixins, TR.SvelteSafelistMixin],
-            #     mutableShell_addonMixins=mutableShell_addonMixins,
-            # )
+            core_hc_type, mutable_shell_type = mutableClassTypeGen(
+                hc_tag,
+                hctag_mixin,
+                staticCoreMixins=staticCoreMixins,
+                mutableShellMixins=mutableShellMixins,
+                staticCore_addonMixins=[*staticCore_addonMixins, TR.SvelteSafelistMixin],
+                mutableShell_addonMixins=mutableShell_addonMixins,
+            )
 
-            # def genStub(**kwargs):
-            #     assert stytags_getter_func
-            #     stytags = stytags_getter_func()
-            #     twsty_tags = conc_twtags(*stytags, *kwargs.pop("twsty_tags", []))
-            #     return gen_Stub_HCMutable(mutable_shell_type, twsty_tags=twsty_tags, **kwargs)
-            #     # return Stub_HCMutable(
-            #     #     mutable_shell_type, twsty_tags=twsty_tags, **kwargs
-            #     # )
-            
+            def genStub(**kwargs):
+                assert stytags_getter_func
+                stytags = stytags_getter_func()
+                twsty_tags = conc_twtags(*stytags, *kwargs.pop("twsty_tags", []))
+                return gen_Stub_HCMutable(mutable_shell_type, twsty_tags=twsty_tags, **kwargs)
 
-            # class WithStub(core_hc_type):
-            #     def __init__(self, *args, **kwargs):
-            #         super().__init__(*args, **kwargs)
-            #         self.kwargs = kwargs
+            class WithStub(core_hc_type):
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self.kwargs = kwargs
 
-            #     def stub(self):
-            #         return genStub(staticCore=self, **self.kwargs)
-            #         pass
+                def stub(self):
+                    return genStub(staticCore=self, **self.kwargs)
+                    pass
 
-            # return WithStub
+            return WithStub
 
         case _:
             assert False

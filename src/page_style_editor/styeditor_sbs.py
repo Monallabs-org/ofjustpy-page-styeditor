@@ -34,6 +34,7 @@ def debug_oj_patch_reset():
     import ofjustpy_components as ojx
     importlib.reload(ojx)
     importlib.reload(oj.SHC_types)
+    importlib.reload(oj.MHC_types)
 
     # Caution:Wisdom: importlib.reload(oj) will not have any effect
     # the oj.htmlcomponents needs to be reloaded
@@ -42,7 +43,6 @@ def debug_oj_patch_reset():
     # This line along with the above importlib.reload(oj.htmlcomponents) is crucial
     importlib.reload(oj)
     btn = oj.AC.Button(key="mybtn", text="A")
-    print (type(btn))
     btn.build_json()
 
         
@@ -66,6 +66,7 @@ def build_styeditor_endpoint(target_wp):
     # in order of the import hierarchy
     #importlib.reload(oj.TF_impl)
     importlib.reload(oj.SHC_types)
+    importlib.reload(oj.MHC_types)
     importlib.reload(oj.Div_TF)
     importlib.reload(oj.HC_TF)
     
@@ -151,7 +152,6 @@ def build_styeditor_endpoint(target_wp):
 
             try:
                 color_expr = get_color_instance(dbref.mcs_value)/int(dbref.scs_value)
-                print (tstr(color_expr))
                 return "/color_choice", color_expr
             except:
 
@@ -180,7 +180,6 @@ def build_styeditor_endpoint(target_wp):
         
         @ojr.ReactDomino
         def on_attr_type_change(dbref, msg, to_ms):
-            print ("called attr type change ", msg)
             if msg.value in styTagDict:
                 return "/utility_class_attr", styTagDict.get(msg.value)
             

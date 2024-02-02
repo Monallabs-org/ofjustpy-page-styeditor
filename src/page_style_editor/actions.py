@@ -19,13 +19,13 @@ def on_enter_focus_hcobj(appstate, arg, wp):
     """
     # print ("WTF : pause_selection ===== ", id(appstate.update_sty_hcobj.pause_selection), " ",
     #        appstate.update_sty_hcobj.pause_selection)
-    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    print("====Enter in-focus==========")
+    #print("alt-approach on_enter_focus", wp.session_manager.pause_selection, id(wp.session_manager.pause_selection))
     if wp.session_manager.pause_selection == True:
         print("selection paused: no action taken ")
         return 
-    print ("in action: highlight_selected_hcobj")
-    print ("selected_hcobj = ", arg)
-    print ("current selected_hcobj = ", appstate.update_sty_hcobj.selected_hcobj)
+    print ("selected_hcobj arg: = ", arg, " ", arg.id)
+    #print ("current selected_hcobj appstate.update_sty_hcobj.selected_hcobj:= ", appstate.update_sty_hcobj.selected_hcobj, " ", appstate.update_sty_hcobj.selected_hcobj.id)
 
     if appstate.update_sty_hcobj.prev_selected_hcobj:
         #print ("prev_selected_hcobj is not none = ", appstate.update_sty_hcobj.prev_selected_hcobj)
@@ -34,7 +34,7 @@ def on_enter_focus_hcobj(appstate, arg, wp):
     
     arg.add_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)    
     appstate.update_sty_hcobj.prev_selected_hcobj = appstate.update_sty_hcobj.selected_hcobj
-    
+    print("====Exit in-focus==========")
     pass
 
 
@@ -43,14 +43,19 @@ def on_exit_focus_hcobj(appstate, arg, wp):
     appctx=/update_sty_hcobj/deselected_hcobj
     """
 
-    if appstate.update_sty_hcobj.pause_selection == True:
-        print("selection paused: no action taken ")
+    if  wp.session_manager.pause_selection == True:
+        print("on_exit_focus: selection paused: no action taken ")
         return
     
     try:
         arg.remove_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)
     except:
         pass
+
+    # on exit make the previously selected 
+    if appstate.update_sty_hcobj.prev_selected_hcobj:
+        pass
+    
     appstate.update_sty_hcobj.prev_selected_hcobj = None
     pass
 
@@ -58,35 +63,42 @@ def on_mouseclick_hcobj(appstate, arg, wp):
     """
     appctx=/update_sty_hcobj/clicked_hcobj
     """
-    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
-    wp.session_manager.pause_selection = True
-    print("alt-approach mouseclick prechange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    # A click on already selected component
+    # will turn on the pause_selection flag
     
-    # print("alt-approach mouseclick prechange ", appstate.pause_selection, id(appstate.pause_selection))
-    # appstate.pause_selection  = True
-    # print("alt-approach mouseclick prechange ", appstate.pause_selection, id(appstate.pause_selection))
-    # print ("Mouse clicked on ", arg, " ", arg.id, " ", appstate.update_sty_hcobj.clicked_hcobj)
-    # print ("The current selection ==> ", appstate.update_sty_hcobj.selected_hcobj)
-    # print ("debug  ==> ", id(appstate), " ", id(appstate.update_sty_hcobj), " ", id(appstate.update_sty_hcobj.pause_selection))
+    print("================= Start on_mouseclick ================+")
     
     if appstate.update_sty_hcobj.clicked_hcobj.id == appstate.update_sty_hcobj.selected_hcobj.id:
         # toggle pause selection 
         if wp.session_manager.pause_selection == False:
             print("Pausing selection ")
-            #         appstate.update_sty_hcobj['pause_selection'] = True
-    #         print ("====> ", appstate.update_sty_hcobj.pause_selection, id(appstate.update_sty_hcobj.pause_selection))
-    #     else:
-    #         print("Not Resuming selection ")
-    #         #appstate.update_sty_hcobj.pause_selection = False
+            wp.session_manager.pause_selection = True
+        else:
+            # To resume selection click on reset button
+            #wp.session_manager.pause_selection = False
+            pass
             
-    # else:
-    #     # First click on the component.
-    #     print("Turning off pause selection ", id(appstate.update_sty_hcobj.pause_selection))
-    #     appstate.update_sty_hcobj.pause_selection = False
-    #     # treat it as mouse enter
-    #     on_enter_focus_hcobj(appstate, arg, wp)
-        
+    else:
+        # First click on the component.
+        #wp.session_manager.pause_selection = False
+        # treat as selection
+        appstate.update_sty_hcobj.selected_hcobj = appstate.update_sty_hcobj.clicked_hcobj
+        # no need : the change in appstate-storepath will trigger on_enter_focus
+        #on_enter_focus_hcobj(appstate, arg, wp)
+        pass
+    print("alt-approach mouseclick postchange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    print ("===================END on_mouseclick=========================")
+    
     pass
+
+def on_resume_selection(appstate, arg, wp):
+    """
+    appctx=/update_sty_hcobj/resume_selection
+    """
+    print("reset the pause_selection to False")
+    wp.session_manager.pause_selection = False
+    pass
+
 def apply_color_to_utility_class_on_selected_hcobj(appstate, arg, wp):
     """
     appctx=/update_sty_hcobj/apply_color_to_utility_class

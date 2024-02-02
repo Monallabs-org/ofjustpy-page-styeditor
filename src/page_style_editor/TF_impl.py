@@ -1,4 +1,32 @@
 from ofjustpy_engine.tracker import trackStub
+
+class IdMixin:
+    """
+    :id: The unique identifier for the component.
+    :param id: The ID attribute to associate with the component.
+    :type id: str or None, optional
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        """
+        self.attrs.id = "/" + self.key  # cls.stub.spath #cls.next_id
+        self.domDict.id = self.attrs.id
+        self.htmlRender_attr.append(f'''id="{self.attrs.id}"''')
+        
+
+    @property
+    def id(self):
+        return self.domDict.id
+
+    # @id.setter
+    # def id(self, value):
+    #     self.domDict.id = value
+    #     self.attrs.id = value
+    #     self.htmlRender_attr.append(f'''id="{self.attrs.id}"''')
+
+
+    
 class StubTag:
     pass
 
@@ -80,5 +108,22 @@ class Stub_HCPassive(Stub_HCStatic):
 
 @trackStub    
 def gen_Stub_HCPassive(target, **kwargs):
-    print ("====================>     from patched gen_Stub_HCPassive")
     return Stub_HCPassive(target=target)
+
+
+
+class Stub_DivPassive(Stub_HCPassive):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        pass
+
+    @classmethod
+    def is_static(cls):
+        return True
+
+    def register_childrens(self):
+        self.target.add_register_childs()
+        
+@trackStub    
+def gen_Stub_DivPassive(target, **kwargs):
+    return Stub_DivPassive(target=target)        
