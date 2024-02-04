@@ -15,7 +15,7 @@ import ofjustpy as oj
 
 def on_enter_focus_hcobj(appstate, arg, wp):
     """
-    appctx=/update_sty_hcobj/selected_hcobj
+    appctx=/update_sty_hcobj/target_hcobj
     """
     # print ("WTF : pause_selection ===== ", id(appstate.update_sty_hcobj.pause_selection), " ",
     #        appstate.update_sty_hcobj.pause_selection)
@@ -24,23 +24,22 @@ def on_enter_focus_hcobj(appstate, arg, wp):
     if wp.session_manager.pause_selection == True:
         print("selection paused: no action taken ")
         return 
-    print ("selected_hcobj arg: = ", arg, " ", arg.id)
-    #print ("current selected_hcobj appstate.update_sty_hcobj.selected_hcobj:= ", appstate.update_sty_hcobj.selected_hcobj, " ", appstate.update_sty_hcobj.selected_hcobj.id)
+    print ("target_hcobj arg: = ", arg, " ", arg.id)
 
-    if appstate.update_sty_hcobj.prev_selected_hcobj:
-        #print ("prev_selected_hcobj is not none = ", appstate.update_sty_hcobj.prev_selected_hcobj)
-        appstate.update_sty_hcobj.prev_selected_hcobj.remove_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)
+
+    if appstate.update_sty_hcobj.prev_target_hcobj:
+        appstate.update_sty_hcobj.prev_target_hcobj.remove_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)
         pass
     
     arg.add_twsty_tags(bds.double, bd/4, bd/red/6, outline/green/8)    
-    appstate.update_sty_hcobj.prev_selected_hcobj = appstate.update_sty_hcobj.selected_hcobj
+    appstate.update_sty_hcobj.prev_target_hcobj = appstate.update_sty_hcobj.target_hcobj
     print("====Exit in-focus==========")
     pass
 
 
 def on_exit_focus_hcobj(appstate, arg, wp):
     """
-    appctx=/update_sty_hcobj/deselected_hcobj
+    appctx=/update_sty_hcobj/detarget_hcobj
     """
 
     if  wp.session_manager.pause_selection == True:
@@ -52,27 +51,28 @@ def on_exit_focus_hcobj(appstate, arg, wp):
     except:
         pass
 
-    # on exit make the previously selected 
-    if appstate.update_sty_hcobj.prev_selected_hcobj:
-        pass
     
-    appstate.update_sty_hcobj.prev_selected_hcobj = None
+    appstate.update_sty_hcobj.prev_target_hcobj = None
     pass
 
 def on_mouseclick_hcobj(appstate, arg, wp):
     """
     appctx=/update_sty_hcobj/clicked_hcobj
     """
-    # A click on already selected component
+
+    print(f"================= Start on_mouseclick: {appstate.update_sty_hcobj.clicked_hcobj.id} ================+")
+    if wp.session_manager.pause_selection:
+        print("selection paused: no action taken ")
+        pass
+    # A click on already targeted component
     # will turn on the pause_selection flag
     
-    print("================= Start on_mouseclick ================+")
-    
-    if appstate.update_sty_hcobj.clicked_hcobj.id == appstate.update_sty_hcobj.selected_hcobj.id:
+    if appstate.update_sty_hcobj.clicked_hcobj.id == appstate.update_sty_hcobj.target_hcobj.id:
         # toggle pause selection 
         if wp.session_manager.pause_selection == False:
             print("Pausing selection ")
             wp.session_manager.pause_selection = True
+            appstate.update_sty_hcobj.selected_hcobj = appstate.update_sty_hcobj.clicked_hcobj
         else:
             # To resume selection click on reset button
             #wp.session_manager.pause_selection = False
@@ -82,11 +82,13 @@ def on_mouseclick_hcobj(appstate, arg, wp):
         # First click on the component.
         #wp.session_manager.pause_selection = False
         # treat as selection
-        appstate.update_sty_hcobj.selected_hcobj = appstate.update_sty_hcobj.clicked_hcobj
+        appstate.update_sty_hcobj.target_hcobj = appstate.update_sty_hcobj.clicked_hcobj
         # no need : the change in appstate-storepath will trigger on_enter_focus
-        #on_enter_focus_hcobj(appstate, arg, wp)
+        on_enter_focus_hcobj(appstate, arg, wp)
         pass
-    print("alt-approach mouseclick postchange ", wp.session_manager.pause_selection, id(appstate.pause_selection))
+    print("alt-approach mouseclick postchange ", wp.session_manager.pause_selection,
+          id(appstate.pause_selection)
+          )
     print ("===================END on_mouseclick=========================")
     
     pass

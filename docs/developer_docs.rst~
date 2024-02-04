@@ -1,0 +1,13 @@
+
+Code layouts
+
+^^^^^^^^^^^^
+
+devel
++++++
+
+- td_sbs_styedit_take1: create endpoint via pse
+
+
+- td_sbs_mutable_wrapper: build_json and get_json_diff for passive components
+

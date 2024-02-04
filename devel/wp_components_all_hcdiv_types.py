@@ -1,16 +1,17 @@
-#import ofjustpy as oj
 from py_tailwind_utils import *
 from addict_tracking_changes import Dict
 
-#app = oj.load_app()
-
-#specimen = oj.AC.Button(key="abtn", text="labeltext", twsty_tags=[bg/blue/3])
-
 def build_childs(oj):
     mbtn = oj.Mutable.Button(key="abtn", text="mutable button", twsty_tags=[bg/blue/3])
+    mdiv = oj.Mutable.Div(key="mdiv", childs = [mbtn], twsty_tags=[W/64, H/64, bg/green/1])
+    
+    hccmutable = oj.HCCMutable.Div(childs=[mdiv])
+    
+    
+    
     pspan = oj.PC.Span(text="Passive span", twsty_tags=[bg/blue/3])
     pdiv = oj.PC.Div(childs = [pspan])
-
+    hccstatic = oj.HCCStatic.Div(key="hccstatic", childs = [pdiv])
     def on_input(dbref, msg, to_target):
         print ("input recieved")
 
@@ -38,5 +39,3 @@ def build_childs(oj):
 
     wp_childs = [mbtn, pdiv, ti, si]
     return wp_childs
-#wp_childs = [ti] 
-

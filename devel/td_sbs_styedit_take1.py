@@ -13,10 +13,10 @@ app = oj.load_app()
 
 
 
-specimen = oj.AC.Button(key="abtn", text="labeltext", twsty_tags=[bg/blue/3])
+#specimen = oj.AC.Button(key="abtn", text="labeltext", twsty_tags=[bg/blue/3])
 
 specimen = oj.Mutable.Button(key="abtn", text="labeltext", twsty_tags=[bg/blue/3])
-specimen = oj.PC.Span(text="labeltext", twsty_tags=[bg/blue/3])
+#specimen = oj.PC.Span(text="labeltext", twsty_tags=[bg/blue/3])
 
 tlc = specimen
 
@@ -46,9 +46,9 @@ wp_endpoint_test = pse.create_endpoint(key="test_page",
 
 app.add_jproute("/x", wp_endpoint_test)
 
-request = Dict()
-request.session_id = "abc"
-wp = wp_endpoint_test(request)
+# request = Dict()
+# request.session_id = "abc"
+# wp = wp_endpoint_test(request)
 
 
 # editor_wp = styeditor.wp_index(request)

@@ -5,9 +5,7 @@ in the rendered page grab hold of event handler and execute.
 # instantiate all the components of styeditor
 
 import page_style_editor as pse
-from py_tailwind_utils import *
-import json
-import jsbeautifier
+
 from ofjustpy_engine.jpcore.justpy_app import run_event_function
 from addict import Dict
 import asyncio

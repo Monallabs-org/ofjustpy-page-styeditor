@@ -6,8 +6,8 @@ import functools
 from py_tailwind_utils import *
 from unittest.mock import patch
 from . import actions
-ui_app_trmap = [ ('/mouseenter_hcobj', '/update_sty_hcobj/selected_hcobj', None),
-                 ('/mousexit_hcobj', '/update_sty_hcobj/deselected_hcobj', None),
+ui_app_trmap = [ ('/mouseenter_hcobj', '/update_sty_hcobj/target_hcobj', None),
+                 ('/mousexit_hcobj', '/update_sty_hcobj/detarget_hcobj', None),
                  ('/mouseclick_hcobj', '/update_sty_hcobj/clicked_hcobj', None),
                  ('/resume_selection', '/update_sty_hcobj/resume_selection', None)
     ]
